@@ -26,7 +26,7 @@ public class UserController
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id)
     {
-        User user = userService.getUserById(id);
+        User user = userService.findUserById(id);
         return user != null ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
     }
 
@@ -39,6 +39,7 @@ public class UserController
     @DeleteMapping("/id")
     public ResponseEntity<Void> deleteUserById(@PathVariable Long id)
     {
+        userService.deleteUserById(id);
         return ResponseEntity.noContent().build();
     }
 }
