@@ -1,3 +1,3 @@
 #!/usr/bin/env sh
 
-/usr/bin/java -jar /opt/app/app.jar
+/opt/java/openjdk/bin/java -jar /opt/app/app.jar

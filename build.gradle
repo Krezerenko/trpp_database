@@ -2,15 +2,10 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.4.5'
 	id 'io.spring.dependency-management' version '1.1.7'
-	id 'application'
 }
 
 group = 'io.github.krezerenko'
-version = '0.0.1-SNAPSHOT'
-
-application {
-	mainClass = 'io.github.krezerenko.trpp_database.TrppDatabaseApplication'
-}
+//version = '0.0.1-SNAPSHOT'
 
 java {
 	toolchain {
@@ -26,7 +21,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.projectlombok:lombok'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
@@ -34,12 +30,16 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
-tasks.named('test', Test) {
-	useJUnitPlatform()
-	testLogging {
-		events "passed", "skipped", "failed"
-	}
-
-	// For configuration cache compatibility
-	systemProperty 'user.timezone', providers.systemProperty('user.timezone').getOrElse('UTC')
+tasks.register("wipeDatabase", Delete) {
+	delete "postgres/data/pgdata"
 }
+
+//tasks.named('test', Test) {
+//	useJUnitPlatform()
+//	testLogging {
+//		events "passed", "skipped", "failed"
+//	}
+//
+//	// For configuration cache compatibility
+//	systemProperty 'user.timezone', providers.systemProperty('user.timezone').getOrElse('UTC')
+//}

@@ -11,25 +11,24 @@ services:
       - ./postgres/init:/docker-entrypoint-initdb.d
       - ./postgres/data:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}" ]
       interval: 10s
       retries: 5
       start_period: 30s
       timeout: 10s
     restart: unless-stopped
     ports:
-      - "5432:5432"
+      - "5433:5432"
 
   restapi:
     image: restapi
     build: .
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/database
-      SPRING_DATASOURCE_USERNAME: krezon
-      SPRING_DATASOURCE_PASSWORD: 1111
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/database"
+      SPRING_DATASOURCE_USERNAME: "krezon"
+      SPRING_DATASOURCE_PASSWORD: "1111"
     depends_on:
       postgres:
         condition: service_healthy
-        restart: true
     ports:
       - "8080:8080"
