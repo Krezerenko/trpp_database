@@ -3,15 +3,15 @@ services:
   postgres:
     image: postgres:17.4
     environment:
-      POSTGRES_DB: "database"
-      POSTGRES_USER: "krezon"
-      POSTGRES_PASSWORD: "1111"
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PGDATA: "/var/lib/postgresql/data/pgdata"
     volumes:
       - ./postgres/init:/docker-entrypoint-initdb.d
       - ./postgres/data:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}" ]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
       interval: 10s
       retries: 5
       start_period: 30s
@@ -24,9 +24,11 @@ services:
     image: restapi
     build: .
     environment:
-      SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/database"
-      SPRING_DATASOURCE_USERNAME: "krezon"
-      SPRING_DATASOURCE_PASSWORD: "1111"
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/${POSTGRES_DB}"
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      SPRING_SECURITY_USER_NAME: ${SPRING_USER}
+      SPRING_SECURITY_USER_PASSWORD: ${SPRING_PASSWORD}
     depends_on:
       postgres:
         condition: service_healthy

@@ -14,21 +14,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig
 {
-//    @Bean
-//    public UserDetailsService userDetailsService()
-//    {
-//        UserDetails user = User.withUsername("user")
-//                .password("1111")
-//                .roles("USER")
-//                .build();
-//
-//        UserDetails admin = User.withUsername("krezon")
-//                .password("--1234Muwa5678--")
-//                .roles("ADMIN", "USER")
-//                .build();
-//
-//        return new InMemoryUserDetailsManager(user, admin);
-//    }
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception
     {
