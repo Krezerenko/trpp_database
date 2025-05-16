@@ -34,6 +34,24 @@ tasks.register("wipeDatabase", Delete) {
 	delete "postgres/data/pgdata"
 }
 
+tasks.register("dockerBuild", Exec) {
+	dependsOn tasks.named("dockerStop")
+	commandLine "docker", "build", "-t", "restapi", "."
+}
+
+tasks.register("dockerStart", Exec) {
+	dependsOn tasks.named("build")
+	commandLine "docker", "compose", "up", "-d"
+}
+
+tasks.register("dockerStop", Exec) {
+	commandLine "docker", "compose", "down"
+}
+
+tasks.named("build") {
+	finalizedBy tasks.named("dockerBuild")
+}
+
 //tasks.named('test', Test) {
 //	useJUnitPlatform()
 //	testLogging {

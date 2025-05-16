@@ -1,4 +1,4 @@
-﻿package io.github.krezerenko.trpp_database;
+package io.github.krezerenko.trpp_database;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;

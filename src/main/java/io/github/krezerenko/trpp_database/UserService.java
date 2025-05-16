@@ -1,4 +1,4 @@
-﻿package io.github.krezerenko.trpp_database;
+package io.github.krezerenko.trpp_database;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,16 +36,41 @@ public class UserService
     {
         userRepository.deleteById(id);
     }
-    public User registerUser(String name, String password)
+    public UserResponseDto registerUser(UserRegistrationDto userDto)
     {
+        // Check if username/email already exists
+        if (userRepository.existsByName(userDto.getName())) {
+            throw new UserAlreadyExistsException("Username already taken");
+        }
+
+        if (userRepository.existsByEmail(userDto.getEmail())) {
+            throw new UserAlreadyExistsException("Email already registered");
+        }
+
+        // Convert DTO to User entity and hash password
         User user = new User();
-        user.setName(name);
-        user.setPassword(password, passwordEncoder);
-        return saveUser(user);
+        user.setName(userDto.getName());
+        user.setEmail(userDto.getEmail());
+        user.setPasswordHash(passwordEncoder.encode(userDto.getPassword()));
+
+        // Save to database
+        User savedUser = userRepository.save(user);
+
+        // Convert saved User entity to Response DTO
+        return convertToResponseDto(savedUser);
     }
+    public UserResponseDto convertToResponseDto(User user)
+    {
+        UserResponseDto responseDto = new UserResponseDto();
+        responseDto.setName(user.getName());
+        responseDto.setEmail(user.getEmail());
+        return responseDto;
+    }
+
     public boolean authenticateUser(String name, String password)
     {
-        User user = userRepository.findByName(name).orElse(null);
-        return user != null && passwordEncoder.matches(password, user.getPasswordHash());
+        User user = userRepository.findByName(name)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        return passwordEncoder.matches(password, user.getPasswordHash());
     }
 }
