@@ -1,8 +1,6 @@
-package io.github.krezerenko.trpp_database;
+package io.github.krezerenko.trpp_database.api.users;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,8 +21,10 @@ public class User
     private String name;
     @Column(nullable = false, name = "password_hash")
     private String passwordHash;
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String email;
+    @Column(unique = true, name = "phone_number", length = 20)
+    private String phoneNumber;
 
     public void setPassword(String password, PasswordEncoder encoder)
     {

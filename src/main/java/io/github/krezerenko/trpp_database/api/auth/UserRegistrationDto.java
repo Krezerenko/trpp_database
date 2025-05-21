@@ -1,4 +1,4 @@
-package io.github.krezerenko.trpp_database;
+package io.github.krezerenko.trpp_database.api.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -15,8 +15,4 @@ public class UserRegistrationDto
     @NotBlank(message = "Password is required")
     @Size(min = 8, max = 100, message = "Password must be 8-100 characters")
     private String password;
-
-    @Email(message = "Invalid email format")
-    @NotBlank(message = "Email is required")
-    private String email;
 }

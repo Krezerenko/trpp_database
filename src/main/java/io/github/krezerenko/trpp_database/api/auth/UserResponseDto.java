@@ -1,4 +1,4 @@
-package io.github.krezerenko.trpp_database;
+package io.github.krezerenko.trpp_database.api.auth;
 
 import lombok.Data;
 
@@ -7,4 +7,5 @@ public class UserResponseDto
 {
     private String name;
     private String email;
+    private String phoneNumber;
 }
