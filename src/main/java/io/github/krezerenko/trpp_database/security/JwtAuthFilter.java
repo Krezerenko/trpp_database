@@ -5,6 +5,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -15,6 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.List;
 
+@Slf4j
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter
 {
@@ -41,11 +43,11 @@ public class JwtAuthFilter extends OncePerRequestFilter
                 UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                         username, null, List.of(new SimpleGrantedAuthority("USER")));
                 SecurityContextHolder.getContext().setAuthentication(auth);
-                logger.debug("User " + username + " authenticated successfully with JWT.");
+                log.debug("User {} authenticated successfully with JWT.", username);
             }
             catch (JwtException e)
             {
-                logger.warn("Invalid JWT token: " + e.getMessage());
+                log.warn("Invalid JWT token: {}", e.getMessage());
                 SecurityContextHolder.clearContext();
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.setContentType("application/json");
@@ -63,7 +65,7 @@ public class JwtAuthFilter extends OncePerRequestFilter
         {
             return header.substring(7);
         }
-        logger.trace("Authorization header is missing or does not start with 'Bearer '");
+        log.trace("Authorization header is missing or does not start with 'Bearer '");
         return null;
     }
 }

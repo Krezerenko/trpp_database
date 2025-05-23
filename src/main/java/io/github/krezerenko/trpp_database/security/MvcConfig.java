@@ -1,4 +1,4 @@
-package io.github.krezerenko.trpp_database.api;
+package io.github.krezerenko.trpp_database.security;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;

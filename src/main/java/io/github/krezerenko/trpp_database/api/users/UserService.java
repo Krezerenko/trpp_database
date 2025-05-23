@@ -1,5 +1,6 @@
 package io.github.krezerenko.trpp_database.api.users;
 
+import io.github.krezerenko.trpp_database.api.auth.UserResponseDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,6 +13,15 @@ public class UserService
     public UserService(UserRepository userRepository)
     {
         this.userRepository = userRepository;
+    }
+
+    public static UserResponseDto convertToResponseDto(User user)
+    {
+        UserResponseDto responseDto = new UserResponseDto();
+        responseDto.setName(user.getName());
+        responseDto.setEmail(user.getEmail());
+        responseDto.setPhoneNumber(user.getPhoneNumber());
+        return responseDto;
     }
 
     public List<User> getAllUsers()

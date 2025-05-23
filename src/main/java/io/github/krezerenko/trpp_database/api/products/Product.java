@@ -1,10 +1,13 @@
-package io.github.krezerenko.trpp_database.api.product;
+package io.github.krezerenko.trpp_database.api.products;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Entity
 @Data
+@Entity
+@Table(name = "products")
+@NoArgsConstructor
 public class Product
 {
     @Id

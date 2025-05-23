@@ -1,4 +1,4 @@
-package io.github.krezerenko.trpp_database.api.product;
+package io.github.krezerenko.trpp_database.api.products;
 
 import org.springframework.stereotype.Service;
 
