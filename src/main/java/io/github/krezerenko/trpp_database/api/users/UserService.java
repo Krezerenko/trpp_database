@@ -4,6 +4,7 @@ import io.github.krezerenko.trpp_database.api.auth.UserResponseDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class UserService
@@ -28,7 +29,7 @@ public class UserService
     {
         return userRepository.findAll();
     }
-    public User findUserById(Long id)
+    public User findUserById(UUID id)
     {
         return userRepository.findById(id).orElse(null);
     }
@@ -44,7 +45,7 @@ public class UserService
     {
         return userRepository.save(user);
     }
-    public void deleteUserById(Long id)
+    public void deleteUserById(UUID id)
     {
         userRepository.deleteById(id);
     }
