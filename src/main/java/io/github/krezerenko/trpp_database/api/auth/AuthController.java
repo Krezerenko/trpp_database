@@ -5,7 +5,10 @@ import io.github.krezerenko.trpp_database.api.users.UserService;
 import io.github.krezerenko.trpp_database.security.JwtUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -41,11 +44,10 @@ public class AuthController
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<AuthResponse> refreshToken(@RequestBody RefreshTokenRequest request)
+    public ResponseEntity<RefreshResponse> refreshToken()
     {
-        String refreshToken = request.getRefreshToken();
-        String username = jwtUtils.validateToken(refreshToken);
-        String newAccessToken = jwtUtils.generateAccessToken(username);
-        return ResponseEntity.ok(new AuthResponse(newAccessToken, refreshToken));
+        String id = SecurityContextHolder.getContext().getAuthentication().getName();
+        String newAccessToken = jwtUtils.generateAccessToken(id);
+        return ResponseEntity.ok(new RefreshResponse(newAccessToken));
     }
 }

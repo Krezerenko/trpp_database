@@ -1,3 +1,5 @@
+import groovy.json.JsonOutput
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.4.5'
@@ -40,6 +42,54 @@ tasks.register("wipeDatabase", Delete) {
 	delete "postgres/data/pgdata"
 }
 
+tasks.register("createTunnel", Exec) {
+	dependsOn(tasks.named("removeTunnel"))
+    def tunnelFile = file("cloudflare/tunnel.txt")
+    commandLine "docker", "run", "-d", "--name", "cloudflare", "--rm",
+            "-v", "\"${tunnelFile.absolutePath}:/mnt/tunnel.txt\"",
+            "cloudflare/cloudflared", "tunnel", "--url", "http://host.docker.internal:8080", "--logfile", "/mnt/tunnel.txt"
+	doLast {
+		sleep(10000)
+		def lines = tunnelFile.readLines()
+		if (lines.size() < 5) throw new GradleException("File has fewer than 5 lines")
+		String fifthLine = lines[4]
+
+		def match = fifthLine =~ /.*?\| +(.+?) +\|.*/
+		if (!match) throw new GradleException("No match found in line 5")
+
+		def tunnelUrl = match.group(1)
+		println "Result: ${tunnelUrl}"
+
+		project.setProperty("tunnel_url", tunnelUrl)
+	}
+	finalizedBy(tasks.named("postTunnelUrl"))
+}
+
+tasks.register("removeTunnel", Exec) {
+    commandLine "docker", "rm", "-f", "cloudflare"
+    def file = file("cloudflare/tunnel.txt")
+    file.write("")
+}
+
+tasks.register("postTunnelUrl", Exec) {
+	doFirst {
+		def tunnelUrl = project.getProperties().get("tunnel_url")
+		if (!tunnelUrl) throw new GradleException("No tunnel url")
+
+		def gistToken = file("cloudflare/gist_token").text.trim()
+		def gistId = file("cloudflare/gist_id").text.trim()
+
+//        def jsonBody = JsonOutput.toJson([files: [link: [content: tunnelUrl]]])
+		def body = "\"{\\\"files\\\":{\\\"link\\\":{\\\"content\\\":\\\"${tunnelUrl}\\\"}}}\""
+		commandLine "curl", "-L", "-X", "PATCH", "-o", "\$null",
+				"-H", "\"Accept: application/vnd.github+json\"",
+				"-H", "\"Authorization: Bearer ${gistToken}\"",
+				"-H", "\"X-GitHub-Api-Version: 2022-11-28\"",
+				"https://api.github.com/gists/${gistId}",
+				"-d", body
+	}
+}
+
 tasks.register("dockerBuild", Exec) {
 	dependsOn tasks.named("dockerStop")
 	commandLine "docker", "build", "-t", "restapi", "."
@@ -59,7 +109,7 @@ tasks.named("build") {
 }
 
 tasks.named('test', Test) {
-//	useJUnitPlatform()
+	useJUnitPlatform()
 	testLogging {
 		events "passed", "skipped", "failed"
 	}
